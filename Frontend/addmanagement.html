@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+        .management-container {
+            padding: 2rem;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            margin: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background-color: #003e9b;
+            color: white;
+            text-align: center;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        .btn-action {
+            margin: 0 5px;
+        }
+
+        .form-control {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body ng-app="teamApp">
+    <script src="header.js"></script>
+    <div class="container" ng-controller="teamController">
+        <div class="management-container">
+            <h1 class="text-center">Team Management</h1>
+
+            <!-- Form to add a new team member -->
+            <h2 class="mt-4">Add New Team Member</h2>
+            <form ng-submit="addTeam()">
+                <input type="text" class="form-control" ng-model="newTeam.first" placeholder="First Name" required>
+                <input type="text" class="form-control" ng-model="newTeam.last" placeholder="Last Name" required>
+                <input type="number" class="form-control" ng-model="newTeam.age" placeholder="Age" required>
+                <input type="text" class="form-control" ng-model="newTeam.education" placeholder="Education" required>
+                <input type="text" class="form-control" ng-model="newTeam.experience" placeholder="Experience" required>
+                <input type="text" class="form-control" ng-model="newTeam.designation" placeholder="Designation" required>
+                
+                <button type="submit" class="btn btn-primary">Add Team Member</button>
+            </form>
+
+            <!-- List of current team members -->
+            <h2 class="mt-4">Current Team</h2>
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Education</th>
+                        <th>Experience</th>
+                        <th>Designation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="team in teams">
+                        <td>{{team.id}}</td>
+                        <td>{{team.first}}</td>
+                        <td>{{team.last}}</td>
+                        <td>{{team.age}}</td>
+                        <td>{{team.education}}</td>
+                        <td>{{team.experience}}</td>
+                        <td>{{team.designation}}</td>
+                        <td>
+                            <button class="btn btn-warning btn-action" ng-click="editTeam(team)">Edit</button>
+                            <button class="btn btn-danger btn-action" ng-click="deleteTeam(team.id)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Search team by ID -->
+            <h2 class="mt-4">Search Team by ID</h2>
+            <form ng-submit="searchTeam()">
+                <input type="number" class="form-control" ng-model="searchId" placeholder="Enter Team ID">
+                <button type="submit" class="btn btn-info">Search</button>
+            </form>
+
+            <div class="mt-4" ng-if="searchResult">
+                <h3>Search Result</h3>
+                <p>
+                    ID: {{searchResult.id}}, 
+                    First: {{searchResult.first}}, 
+                    Last: {{searchResult.last}}, 
+                    Age: {{searchResult.age}}, 
+                    Education: {{searchResult.education}}, 
+                    Designation: {{searchResult.designation}}, 
+                    Experience: {{searchResult.experience}}
+                </p>
+            </div>
+
+            <div class="mt-4" ng-if="!searchResult && searchId">
+                <p class="text-danger">No team member found with the provided ID.</p>
+            </div>
+        </div>
+    </div>
+<script src="footer.js"></script>
+    <script>
+angular.module("teamApp", [])
+.controller("teamController", function($scope, $http) {
+    const baseUrl = "http://localhost:8085/api/team";
+
+    $scope.teams = [];
+    $scope.newTeam = { first: "", last: "", age: null, education: "", experience: "", designation: "" };
+    $scope.searchResult = null;
+
+    const fetchAllTeams = () => {
+        $http.get(baseUrl).then((response) => {
+            $scope.teams = response.data.data;
+        });
+    };
+
+    fetchAllTeams(); // Fetch teams on initialization
+
+    $scope.addTeam = () => {
+        $http.post(baseUrl + "/add", $scope.newTeam).then((response) => {
+            if (response.data.status) {
+                alert("Team member added successfully");
+                fetchAllTeams(); // Refresh the list
+                $scope.newTeam = { first: "", last: "", age: null, education: "", experience: "", designation: "" }; // Reset the form
+            } else {
+                alert("Failed to add team member");
+            }
+        });
+    };
+
+    $scope.editTeam = (team) => {
+        const updatedTeam = {
+            first: prompt("Enter new first name", team.first),
+            last: prompt("Enter new last name", team.last),
+            age: parseInt(prompt("Enter new age", team.age)),
+            education: prompt("Enter new education", team.education),
+            experience: prompt("Enter new experience", team.experience),
+            designation: prompt("Enter new designation", team.designation)
+        };
+
+        if (updatedTeam.first && updatedTeam.last && updatedTeam.age && updatedTeam.education && updatedTeam.experience && updatedTeam.designation) {
+            $http.put(`${baseUrl}/update/${team.id}`, updatedTeam).then((response) => {
+                if (response.data.status) {
+                    alert("Team member updated successfully");
+                    fetchAllTeams(); // Refresh the list
+                } else {
+                    alert("Failed to update team member");
+                }
+            });
+        }
+    };
+
+    $scope.deleteTeam = (teamId) => {
+        if (confirm("Are you sure you want to delete this team member?")) {
+            $http.delete(`${baseUrl}/delete/${teamId}`).then((response) => {
+                if (response.data.status) {
+                    alert("Team member deleted successfully");
+                    fetchAllTeams(); // Refresh the list
+                } else {
+                    alert("Failed to delete team member");
+                }
+            });
+        }
+    };
+
+    $scope.searchTeam = () => {
+        if ($scope.searchId) {
+            $http.get(`${baseUrl}/search/${$scope.searchId}`).then((response) => {
+                if (response.data.data.length > 0) {
+                    $scope.searchResult = response.data.data[0];
+                } else {
+                    $scope.searchResult = null;
+                    alert("No team member found with the provided ID.");
+                }
+            });
+        }
+    };
+});
+    </script>
+</body>
+</html>

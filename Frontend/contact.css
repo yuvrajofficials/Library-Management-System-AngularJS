@@ -1,0 +1,123 @@
+
+.form-container{
+    display: grid;
+    grid-template-columns: auto;
+}
+
+
+.form-main{
+    color: aliceblue;
+   margin: 5% 20%;
+   padding: 5%;
+   background: rgb(2,0,36);
+   background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+   border-radius: 10px;
+}
+
+.form-btn{
+    display: grid;
+    grid-template-columns: auto auto;
+    margin: 4%;
+}
+button{
+    border-radius: 10px;
+    background-color: rgb(233, 229, 20);
+    font-weight: 500;
+}
+
+label{
+    margin: 2% 0%;
+}
+input{
+    padding: 1%;
+}
+
+textarea{
+    padding: 1%;
+
+}
+.btn-submit{
+    background-color: #00f752;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    height: 3rem;
+}
+.btn-reset{
+    background-color: #f70000;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    height: 3rem;
+}
+
+
+@media only screen and (max-width: 570px) {
+   
+
+
+
+    .form-main{
+        
+       margin: 5% 2%;
+       padding: 3%;
+       background: rgb(2,0,36);
+       background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+       border-radius: 10px;
+    }
+    
+    .form-btn{
+        display: grid;
+        grid-template-columns: auto auto;
+        margin: 2%;
+    }
+    button{
+        border-radius: 5px;
+        background-color: rebeccapurple;
+        font-weight: 300;
+    }
+    
+    label{
+        margin: 2% 0%;
+    }
+    input{
+        padding: 1%;
+    }
+    textarea{
+        padding: 1%;
+
+    }
+    
+    .btn-submit{
+        background-color: #00f752;
+        font-size: 0.8rem;
+        border-radius: 5px;
+        height: 2rem;
+    }
+    .btn-reset{
+        background-color: #f70000;
+        font-size: 0.8rem;
+        border-radius: 5px;
+        height: 2rem;
+    }
+}
+
+
+@media only screen and (max-width: 350px) {
+
+    form{
+    font-size: 0.6rem;
+    border-radius: 2px;
+    }
+
+.btn-submit{
+    background-color: #00f752;
+    font-size: 0.6rem;
+    border-radius: 3px;
+    height: 1.5rem;
+}
+.btn-reset{
+    background-color: #f70000;
+    font-size: 0.6rem;
+    border-radius: 3px;
+    height: 1.5rem;
+}
+}

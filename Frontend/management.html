@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+   <style>
+        /* Custom styles for the UI */
+        .management-container {
+            padding: 2rem;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            margin: 2rem;
+        }
+
+        .management-container h2 {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
+        .table {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body ng-app="libraryApp">
+    <script src="header.js"></script>
+
+    <main ng-controller="ManagementController">
+        <div class="container">
+            <div class="management-container">
+                <h2>Our Management</h2>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Sr. No.</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="member in teams">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ member.first }} {{ member.last }}</td>
+                            <td>{{ member.designation }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div ng-if="error" class="error-message">
+                {{ error }}
+            </div>
+        </div>
+    </main>
+
+    <script src="footer.js"></script>
+
+
+    <script>
+        var app = angular.module("libraryApp", []);
+
+        app.controller("ManagementController", function($scope, $http) {
+            // Fetch data from the REST API endpoint
+            var apiUrl = "http://localhost:8085/api/team"; // Adjust as needed
+
+            // Initialize an empty array for teams
+            $scope.teams = [];
+
+            // Fetch the data
+            $http.get(apiUrl).then(function(response) {
+                // Extract data from response and assign it to the scope
+                if (response.data.status && response.data.data) {
+                    $scope.teams = response.data.data;
+                } else {
+                    console.error("Unexpected data format:", response);
+                    $scope.error = "Data retrieval error.";
+                }
+            }, function(error) {
+                console.error("Error fetching management data:", error);
+                $scope.error = "Error fetching management data.";
+            });
+        });
+    </script>
+</body>
+</html>
